@@ -1,0 +1,9 @@
+# Ignorar cosas de los IDEs
+.idea/
+*.iml
+.vscode/
+
+# Ignorar cosas del SO
+Thumbs.db
+Desktop.ini
+.DS_Store
