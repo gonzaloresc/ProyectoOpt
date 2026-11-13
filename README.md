@@ -12,11 +12,11 @@ Descripción:
 ## Clases Genericas  
 
 | **Clase**              | **Atributos Minimos**                                                                                                                                |
-| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+|------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
 | SeccionHardware        | id, nombre, descripcion                                                                                                                              |
-| Producto               | id, sku (código único), nombre, descripcion, precio, stock, imagenUrl, activo, destacado, fechaAlta, categoria,<br>//TODO dos atributos propios      |
+| Componente             | id, sku (código único), nombre, descripcion, precio, stock, imagenUrl, activo, destacado, fechaAlta, categoria,<br> **marca**, **garantiaMeses**     |
 | Usuario                | id, uid //TODO (identificador de Firebase o Supabase; con Spring Security, la contraseña cifrada), <br>email, nombre, direccionEnvio, rol, fechaAlta |
-| Carrito y LineaCarrito | usuario, lineas / producto, cantidad                                                                                                                 |
+| Carrito y LineaCarrito | usuario, lineas / componente, cantidad                                                                                                               |
 | Pedido                 | id, codigo (por ejemplo PED-2026-0001), usuario, fecha, estado, direccionEnvio, subtotal, gastosEnvio, total, lineas                                 |
 | LineaPedido            | componente, nombreComponente, precioUnitario, cantidad, subtotal                                                                                     |
 | Rol y EstadoPedido     | enumerados: CLIENTE, ADMIN / PENDIENTE, PAGADO, ENVIADO, ENTREGADO, CANCELADO                                                                        |
