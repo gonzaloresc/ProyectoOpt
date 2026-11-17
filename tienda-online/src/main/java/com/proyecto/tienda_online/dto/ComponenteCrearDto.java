@@ -13,15 +13,15 @@ public class ComponenteCrearDto {
     private Long seccionHardwareId;
     private String descripcion;
     private String imagenUrl;
-    private Boolean activo;
     private Boolean destacado;
-    private LocalDate fechaAlta;
     private SeccionHardware categoria;
+    private String marca;
+    private Integer garantiaMeses;
 
     public ComponenteCrearDto() {
     }
 
-    public ComponenteCrearDto(String sku, String nombre, BigDecimal precio, Integer stock, Long seccionHardwareId, String descripcion, String imagenUrl, Boolean activo, Boolean destacado, LocalDate fechaAlta, SeccionHardware categoria) {
+    public ComponenteCrearDto(String sku, String nombre, BigDecimal precio, Integer stock, Long seccionHardwareId, String descripcion, String imagenUrl, Boolean destacado, SeccionHardware categoria, String marca, Integer garantiaMeses) {
         this.sku = sku;
         this.nombre = nombre;
         this.precio = precio;
@@ -31,6 +31,8 @@ public class ComponenteCrearDto {
         this.imagenUrl = imagenUrl;
         this.destacado = destacado;
         this.categoria = categoria;
+        this.marca = marca;
+        this.garantiaMeses = garantiaMeses;
     }
 
     public String getSku() {
@@ -89,14 +91,6 @@ public class ComponenteCrearDto {
         this.imagenUrl = imagenUrl;
     }
 
-    public Boolean getActivo() {
-        return activo;
-    }
-
-    public void setActivo(Boolean activo) {
-        this.activo = activo;
-    }
-
     public Boolean getDestacado() {
         return destacado;
     }
@@ -105,19 +99,27 @@ public class ComponenteCrearDto {
         this.destacado = destacado;
     }
 
-    public LocalDate getFechaAlta() {
-        return fechaAlta;
-    }
-
-    public void setFechaAlta(LocalDate fechaAlta) {
-        this.fechaAlta = fechaAlta;
-    }
-
     public SeccionHardware getCategoria() {
         return categoria;
     }
 
     public void setCategoria(SeccionHardware categoria) {
         this.categoria = categoria;
+    }
+
+    public String getMarca() {
+        return marca;
+    }
+
+    public void setMarca(String marca) {
+        this.marca = marca;
+    }
+
+    public Integer getGarantiaMeses() {
+        return garantiaMeses;
+    }
+
+    public void setGarantiaMeses(Integer garantiaMeses) {
+        this.garantiaMeses = garantiaMeses;
     }
 }
