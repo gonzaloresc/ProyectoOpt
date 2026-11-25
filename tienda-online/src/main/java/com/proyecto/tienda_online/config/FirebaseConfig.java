@@ -32,11 +32,7 @@ public class FirebaseConfig {
         } else {
             credentials = GoogleCredentials.getApplicationDefault();  // Intentará buscar variables en el entorno
         }
-
-        FirebaseOptions options = FirebaseOptions.builder()  // Prepara la configuración de arranque con las credenciales obtenidas
-                .setCredentials(credentials)
-                .build();
-
+        FirebaseOptions options = FirebaseOptions.builder().setCredentials(credentials).build();  // Prepara la configuración de arranque con las credenciales obtenidas
         return FirebaseApp.initializeApp(options); // Arranca con estas configuraciones
     }
 

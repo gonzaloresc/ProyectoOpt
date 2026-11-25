@@ -59,13 +59,16 @@ Hereda de OncePerRequestFilter que es una clase de Spring que nos permite ejecut
 Este la clase usa el metodo doFilterInternal donde se encuentra toda la logica de autenticacion para cada peticion.
 El metodo recibe tanto el contenido de la request como de la response y un objeto FilterChain para poder continuar el flujo del programa hacia otro filtro o directamente al controller si no hay más filtros.
 Esta clase se ejecuta antes porque hereda de OncePerRequestFilter y SpringBoot le da prioridad a los filtros.
-Usamos UsernamePasswordAuthenticationToken porque es el estandar usado en SpringBoot para autenticación y poder usarlo después en UsuarioActualService. Recibe el token, credenciales (null en este caso porque ya está verificado) y la lista de roles, por ahora solo el rol cliente.
+Usamos UsernamePasswordAuthenticationToken porque es el estandar usado en SpringBoot para autenticación y poder usarlo después en UsuarioActualService. Recibe el usuario, credenciales (null en este caso porque ya está verificado) y la lista de roles, o cliente o admin.
 SecurityContextHolder es donde Spring Security guarda quién está autenticado y lo usaremos después en UsuarioActualService.
 
 ### UsuarioActualService
 Guardamos los correos válidos en un Set<String para que no haya repetidos.\
 
-
+### SecurityConfig
+Modificamos el objeto HttpSecurity\
+En este archivo nos aseguramos que rutas están protegidas para el filtro (**/api/admin**)
+Creamos registroFiltroFirebase para que no haya conflicto con @Component FiltroAutenticacionFirebase
 
 
 
