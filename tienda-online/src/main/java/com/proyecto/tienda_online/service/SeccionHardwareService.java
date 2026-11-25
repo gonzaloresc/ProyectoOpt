@@ -14,7 +14,7 @@ import java.util.List;
 @Service
 public class SeccionHardwareService {
     private long siguienteId = 0;
-    private final ArrayList<SeccionHardware> seccionesHardware = new ArrayList<>(List.of(
+    protected final ArrayList<SeccionHardware> seccionesHardware = new ArrayList<>(List.of(
             new SeccionHardware(++siguienteId, "Procesador", "Unidad central de procesamiento que ejecuta las instrucciones del sistema y las aplicaciones."),
             new SeccionHardware(++siguienteId, "Tarjeta gráfica", "Componente encargado de procesar y mostrar los gráficos y el vídeo en pantalla."),
             new SeccionHardware(++siguienteId, "Memoria RAM", "Memoria de acceso rápido donde el sistema almacena temporalmente los datos en uso.")
