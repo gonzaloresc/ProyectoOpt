@@ -24,6 +24,13 @@ public class ComponenteAdminController {
         return ResponseEntity.ok(listado);
     }
 
+    // Le pongo valor por defecto
+    @GetMapping
+    public ResponseEntity<ArrayList<ComponenteDetalleDto>> listarStockBajo(@RequestParam(defaultValue = "5") Integer umbral) {
+        ArrayList<ComponenteDetalleDto> listado = componenteService.listarStockBajo(umbral);
+        return ResponseEntity.ok(listado);
+    }
+
     @PostMapping
     public ResponseEntity<ComponenteDetalleDto> crearComponente(@RequestBody ComponenteCrearDto dto){
         ComponenteDetalleDto creado = componenteService.crearComponente(dto);

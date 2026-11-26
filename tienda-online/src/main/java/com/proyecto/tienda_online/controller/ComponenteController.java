@@ -1,6 +1,7 @@
 package com.proyecto.tienda_online.controller;
 
 import com.proyecto.tienda_online.dto.ComponenteDetalleDto;
+import com.proyecto.tienda_online.dto.ComponenteFiltroDto;
 import com.proyecto.tienda_online.dto.ComponenteResumenDto;
 import com.proyecto.tienda_online.service.ComponenteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +20,11 @@ public class ComponenteController {
     @Autowired
     private ComponenteService componenteService;
 
-//    @GetMapping
-//    public ResponseEntity<ArrayList<ComponenteResumenDto>> listarComponentes(ComponenteFiltroDto filtro) {
-//        ArrayList<ComponenteResumenDto> listado = componenteService.listarComponentesFiltrados(filtro);
-//        return ResponseEntity.ok(listado);
-//    }
+    @GetMapping
+    public ResponseEntity<ArrayList<ComponenteResumenDto>> listarComponentes(ComponenteFiltroDto filtro) {
+        ArrayList<ComponenteResumenDto> listado = componenteService.listarComponentesFiltrados(filtro);
+        return ResponseEntity.ok(listado);
+    }
 
     @GetMapping("/destacados")
     public ResponseEntity<ArrayList<ComponenteResumenDto>> listarDestacados() {
