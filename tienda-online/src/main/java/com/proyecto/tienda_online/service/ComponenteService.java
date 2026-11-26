@@ -3,9 +3,11 @@ package com.proyecto.tienda_online.service;
 import com.proyecto.tienda_online.dto.*;
 import com.proyecto.tienda_online.exception.ComponenteInvalidoException;
 import com.proyecto.tienda_online.exception.ComponenteNoEncontradoException;
+import com.proyecto.tienda_online.exception.SeccionHardwareNoEncontradaException;
 import com.proyecto.tienda_online.model.Componente;
+import com.proyecto.tienda_online.model.Direccion;
+import com.proyecto.tienda_online.model.Orden;
 import com.proyecto.tienda_online.model.SeccionHardware;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -48,6 +50,7 @@ public class ComponenteService {
 
     // Metodos para todos
 
+    // Listar todos los componentes pero activos
     public ArrayList<ComponenteResumenDto> listarComponentesActivos(){
         ArrayList<ComponenteResumenDto> resultado = new ArrayList<>();
 
@@ -60,6 +63,126 @@ public class ComponenteService {
         return resultado;
     }
 
+    // Apartado 5
+    // Filtros
+    public ArrayList<ComponenteResumenDto> listarComponentesFiltrados(ComponenteFiltroDto filtro) {
+
+        // El precio minimo no puede ser mayor que el precio maximo
+        if(filtro.getPrecioMin() != null &&
+           filtro.getPrecioMax() != null &&
+           filtro.getPrecioMin().compareTo(filtro.getPrecioMax()) > 0 // Parte de investigación
+        ){
+            throw new ComponenteInvalidoException("El precio minimo no puede ser mayor que el maximo");
+        }
+
+        // Busqueda
+        String busqueda = null;
+        if(filtro.getQ() != null && !filtro.getQ().isBlank()){
+            busqueda = filtro.getQ().toLowerCase().replace('á','a').replace('é','e').replace('í','i').replace('ó','o').replace('ú','u');
+        }
+
+        ArrayList<Componente> filtrados = new ArrayList<>();
+
+        for (Componente c : componentes){
+
+            // Variable bandera
+            boolean seguir = true;
+
+            // Si no está activo sale
+            if (!c.getActivo()){seguir=false;}
+
+            // Si su categoria es null o no coincide con el filtro, sale
+            if (seguir && filtro.getCategoriaId() != null) {
+                if (c.getCategoria() == null || !c.getCategoria().getId().equals(filtro.getCategoriaId())){
+                    seguir = false;
+                }
+            }
+
+            // Si el nombre y la descripción no son el nombre y la descripción de "busqueda", sale
+            if (seguir && busqueda != null) {
+                String nombreN = c.getNombre().toLowerCase().replace('á','a').replace('é','e').replace('í','i').replace('ó','o').replace('ú','u');
+                String descN = c.getDescripcion().toLowerCase().replace('á','a').replace('é','e').replace('í','i').replace('ó','o').replace('ú','u');
+                if (!nombreN.contains(busqueda) && !descN.contains(busqueda)){
+                    seguir = false;
+                }
+            }
+
+            // Filtro de precio minimo
+            if (seguir && filtro.getPrecioMin() != null && c.getPrecio().compareTo(filtro.getPrecioMin()) < 0){
+                seguir = false;
+            }
+
+            // Filtro por precio max
+            if (seguir && filtro.getPrecioMax() != null && c.getPrecio().compareTo(filtro.getPrecioMax()) > 0){
+                seguir = false;
+            }
+
+            // Disponible
+            if (seguir && filtro.getSoloDisponibles() != null && filtro.getSoloDisponibles() &&  c.getStock() <= 0){
+                seguir = false;
+            }
+
+            // Marca
+            if (seguir && filtro.getMarca() != null && !filtro.getMarca().isBlank()) {
+                if (c.getMarca() == null || !c.getMarca().equalsIgnoreCase(filtro.getMarca().trim())) {
+                    seguir = false;
+                }
+            }
+
+            // Si todo está bien, continua
+            if (seguir) {
+                filtrados.add(c);
+            }
+
+        }
+
+        // Ordenar
+        if (filtro.getOrden() != null ) {
+            for (int i = 0; i < filtrados.size() - 1; i++){
+                // Aquí quiero comparar los elementos con el siguiente
+                for (int j = i + 1; j < filtrados.size(); j++){
+                    Componente a = filtrados.get(i);
+                    Componente b = filtrados.get(j);
+
+                    // dará "<0" si a va primero, dará "0" si van iguales, y ">0" despues
+                    int comparacion = 0;
+
+                    switch (filtro.getOrden()) {
+                        case NOMBRE:
+                            comparacion = a.getNombre().compareToIgnoreCase(b.getNombre());
+                            break;
+                        case PRECIO:
+                            comparacion = a.getPrecio().compareTo(b.getPrecio());
+                            break;
+                        case NOVEDAD:
+                            comparacion = a.getFechaAlta().compareTo(b.getFechaAlta());
+                            break;
+                    }
+
+                    if (filtro.getDireccion() == Direccion.DESC) {
+                        // Al estar ordenado del reves se pone negativo
+                        comparacion = -comparacion;
+                    }
+
+                    if(comparacion > 0){
+                        filtrados.set(i,b);
+                        filtrados.set(j,a);
+                    }
+
+                }
+            }
+        }
+
+        ArrayList<ComponenteResumenDto> resultado = new ArrayList<>();
+        for (Componente c : filtrados){
+            resultado.add(parsearAResumenDto(c));
+        }
+        return resultado;
+
+    }
+
+
+    // Listar los componentes destacados
     public ArrayList<ComponenteResumenDto> listarComponentesDestacados(){
         ArrayList<ComponenteResumenDto> resultado = new ArrayList<>();
 
@@ -72,6 +195,7 @@ public class ComponenteService {
         return resultado;
     }
 
+    // Obtener componentes por id pero activos
     // Uso el metodo que tengo para buscar pero aquí le añado el activo
     public ComponenteDetalleDto obtenerComponenteActivoPorId(Long id) {
         Componente componente = obtenerComponenteOriginalPorId(id);
@@ -81,6 +205,7 @@ public class ComponenteService {
         return parsearADetalleDto(componente);
     }
 
+    // Apartado 5
     // Hacer sku
     public ComponenteDetalleDto obtenerComponenteActivoPorSku(String sku) {
         for (Componente c : componentes) {
@@ -91,16 +216,55 @@ public class ComponenteService {
         throw new ComponenteNoEncontradoException("Componente con SKU: "+sku+" no encontrado");
     }
 
+    // Apartado 5
+    // Listar por seccion
+    public ArrayList<ComponenteResumenDto> listarComponentesPorSeccion(Long seccionId) {
 
+        // Comprobar si la seccion existe
+        boolean existeSec = false;
+        for (SeccionHardware s : secciones) {
+            if (s.getId().equals(seccionId)) {
+                existeSec = true;
+                break;
+            }
+        }
+        if (!existeSec){throw new SeccionHardwareNoEncontradaException("La seccion con id: " +seccionId+ " no ha sido encontrada");}
+
+        ArrayList<ComponenteResumenDto> resultado = new ArrayList<>();
+        for (Componente c : componentes) {
+            if (c.getActivo() && c.getCategoria() != null && c.getCategoria().getId().equals(seccionId)) {
+                resultado.add(parsearAResumenDto(c));
+            }
+        }
+        return resultado;
+
+    }
 
 
     // Metodos para admin
 
+    // Listar todos los componentes
     public ArrayList<ComponenteDetalleDto> listarTodosComponentesAdmin() {
         ArrayList<ComponenteDetalleDto> resultado = new ArrayList<>();
 
         for (Componente c : componentes) {
             resultado.add(parsearADetalleDto(c));
+        }
+        return resultado;
+    }
+
+    // Apartado 5
+    // Listar por stock
+    public ArrayList<ComponenteDetalleDto> listarStockBajo(Integer umbral) {
+        if (umbral == null || umbral < 0){
+            throw new ComponenteInvalidoException("El umbral debe ser mayor que 0");
+        }
+
+        ArrayList<ComponenteDetalleDto> resultado = new ArrayList<>();
+        for (Componente c : componentes) {
+            if (c.getStock() <= umbral) {
+                resultado.add(parsearADetalleDto(c));
+            }
         }
         return resultado;
     }
