@@ -33,6 +33,9 @@ Recibe los endpoints orientados al público
 Recibe los endpoints orientados a los administradores.\
 Esta distinción es para dividir las clases por rol, mayor legibilidad y que los controladores tengan responsabilidades únicas. Posteriormente cuando tengamos que asignar seguridad esta separación será útil.
 
+### Resolver Dependencia Circular
+ComponenteService depende de SeccionHardwareService. Creamos una interfaz que solo obtendrá una copia de la lista en memoria para comprobar si se puede eliminar dicha categoría.\
+Para implementar esto, necesitamos la clase ObjectProvider, que permite obtener el bean solo cuando lo necesitas, evitando así la dependencia.
 ## Preguntas A Matías
 - RequestMapping(/api/categoria) || (/api) porque hay endpoints a /api/admin/categoria
 - Consultar la separación de los controllers

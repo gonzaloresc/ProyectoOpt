@@ -5,6 +5,7 @@ import com.proyecto.tienda_online.dto.ComponenteDetalleDto;
 import com.proyecto.tienda_online.dto.StockDto;
 import com.proyecto.tienda_online.service.ComponenteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public class ComponenteAdminController {
     }
 
     // Le pongo valor por defecto
-    @GetMapping
+    @GetMapping("/stock-bajo")
     public ResponseEntity<ArrayList<ComponenteDetalleDto>> listarStockBajo(@RequestParam(defaultValue = "5") Integer umbral) {
         ArrayList<ComponenteDetalleDto> listado = componenteService.listarStockBajo(umbral);
         return ResponseEntity.ok(listado);
