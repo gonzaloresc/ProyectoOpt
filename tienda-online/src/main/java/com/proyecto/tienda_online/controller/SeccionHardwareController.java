@@ -3,6 +3,7 @@ package com.proyecto.tienda_online.controller;
 import com.proyecto.tienda_online.dto.SeccionHardwareDto;
 import com.proyecto.tienda_online.service.SeccionHardwareService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 @RestController
 @RequestMapping("/api/secciones")
 public class SeccionHardwareController {
+
     @Autowired
     private SeccionHardwareService seccionHardwareService;
 

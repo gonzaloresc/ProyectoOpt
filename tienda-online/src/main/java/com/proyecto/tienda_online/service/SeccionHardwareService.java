@@ -4,8 +4,12 @@ import com.proyecto.tienda_online.dto.SeccionHardwareCrearDto;
 import com.proyecto.tienda_online.dto.SeccionHardwareDto;
 import com.proyecto.tienda_online.exception.AtributosInvalidosException;
 import com.proyecto.tienda_online.exception.SeccionHardwareNoEncontradaException;
+import com.proyecto.tienda_online.exception.SeccionHardwareNoVaciaException;
 import com.proyecto.tienda_online.exception.SeccionHardwareYaExistenteException;
+import com.proyecto.tienda_online.model.Componente;
 import com.proyecto.tienda_online.model.SeccionHardware;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -13,12 +17,21 @@ import java.util.List;
 
 @Service
 public class SeccionHardwareService {
+    private final ObjectProvider<ObtenerComponentes> obtenerComponentesProvider;
+
+    public SeccionHardwareService(
+            ObjectProvider<ObtenerComponentes> obtenerComponentesProvider) {
+        this.obtenerComponentesProvider = obtenerComponentesProvider;
+    }
+
     private long siguienteId = 0;
     protected final ArrayList<SeccionHardware> seccionesHardware = new ArrayList<>(List.of(
             new SeccionHardware(++siguienteId, "Procesador", "Unidad central de procesamiento que ejecuta las instrucciones del sistema y las aplicaciones."),
             new SeccionHardware(++siguienteId, "Tarjeta gráfica", "Componente encargado de procesar y mostrar los gráficos y el vídeo en pantalla."),
             new SeccionHardware(++siguienteId, "Memoria RAM", "Memoria de acceso rápido donde el sistema almacena temporalmente los datos en uso.")
     ));
+
+
 
 
     public ArrayList<SeccionHardwareDto> listarSeccionesHardware(){
@@ -69,6 +82,18 @@ public class SeccionHardwareService {
         return parsearADto(seccionHardwareAModificar);
     }
 
+    public SeccionHardwareDto eliminarSeccionHardware(Long id){
+        SeccionHardware seccionHardwareAEliminar = obtenerSeccionHardwareOriginalPorId(id);
+        ArrayList<Componente>  componentes = obtenerComponentesProvider.getObject().obtenerComponentes();
+        for (Componente componente : componentes){
+            if (componente.getCategoria().getId().equals(seccionHardwareAEliminar.getId())){
+                throw new SeccionHardwareNoVaciaException("Esta seccion hardware aún tiene componentes asignados");
+            }
+        }
+        seccionesHardware.remove(seccionHardwareAEliminar);
+        return parsearADto(seccionHardwareAEliminar);
+    }
+
     private SeccionHardware obtenerSeccionHardwareOriginalPorId(Long id){
         for (SeccionHardware seccionHardware : seccionesHardware){
             if (seccionHardware.getId().equals(id)){
@@ -94,4 +119,6 @@ public class SeccionHardwareService {
         );
         return seccionHardwareDto;
     }
+
+
 }

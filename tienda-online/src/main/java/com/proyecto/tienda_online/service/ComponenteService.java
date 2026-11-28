@@ -8,6 +8,7 @@ import com.proyecto.tienda_online.model.Componente;
 import com.proyecto.tienda_online.model.Direccion;
 import com.proyecto.tienda_online.model.Orden;
 import com.proyecto.tienda_online.model.SeccionHardware;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -17,7 +18,7 @@ import java.util.List;
 
 
 @Service
-public class ComponenteService {
+public class ComponenteService implements ObtenerComponentes{
 
     private SeccionHardwareService seccionHardwareService;
     private ArrayList<SeccionHardware> secciones;
@@ -438,6 +439,10 @@ public class ComponenteService {
         if (dto.getSeccionHardwareId()==null){throw new ComponenteInvalidoException("Tienes que poner un id de seccion");}
     }
 
-
+    // Metodo para SeccionHardwareService y evitar dependencia circular
+    @Override
+    public ArrayList<Componente> obtenerComponentes(){
+        return new ArrayList<>(componentes);
+    }
 
 }

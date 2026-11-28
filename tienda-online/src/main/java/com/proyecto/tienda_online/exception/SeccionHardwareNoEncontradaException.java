@@ -6,6 +6,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 public class SeccionHardwareNoEncontradaException extends ResponseStatusException {
     public SeccionHardwareNoEncontradaException(String message) {
-        super(HttpStatus.BAD_REQUEST , message);
+        super(HttpStatus.NOT_FOUND , message);
     }
 }
